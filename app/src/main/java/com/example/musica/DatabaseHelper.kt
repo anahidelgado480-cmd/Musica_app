@@ -2,6 +2,7 @@ package com.example.musica
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
@@ -12,7 +13,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(
     DATABASE_VERSION,
 ) {
 
-    companion object{
+    companion object {
         private const val DATABASE_NAME = "music.db"
         private const val DATABASE_VERSION = 1
         private const val TABLE_USUARIOS = "usuarios"
@@ -25,7 +26,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(
 
     //MÉTODO PARA CREAR LA BASE DE DATOS
     override fun onCreate(p0: SQLiteDatabase?) {
-       val creartablausuarios = """
+        val creartablausuarios = """
            CREATE TABLE $TABLE_USUARIOS (
                $COL_ID INTEGER PRIMARY KEY AUTOINCREMENT,
                $COL_NOMBRE TEXT NOT NULL,
@@ -46,7 +47,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(
     }
 
     //MÉTODO PARA INSERTAR REGISTRO
-    fun registrarusuario(nombre : String, correo : String, password : String) : Boolean {
+    fun registrarusuario(nombre: String, correo: String, password: String): Boolean {
 
         //Crear variable para que la base de datos de pueda modificar
         val p0 = writableDatabase
@@ -68,4 +69,29 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(
         return resultado != -1L
 
     }
+
+
+//MÉTODO PARA CONSULTAR A UN USUARIO
+fun iniciarSesion(correo: String, password: String) : Boolean{
+
+    val db = readableDatabase
+
+    val query_sql = """
+        SELECT * FROM $TABLE_USUARIOS
+        WHERE $COL_CORREO = ?
+    """.trimIndent()
+
+    //Crear cursor para recorrer la información
+    val cursor = db.rawQuery(
+        query_sql, arrayOf(correo, password)
+    )
+    //Crear variable de tipo Bool que permita saber si el cursor encontróun registro
+    val usuarioEncontrado = cursor.count > 0
+
+    cursor.close()
+    db.close()
+
+    return usuarioEncontrado
+
+ }
 }
