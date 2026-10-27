@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -26,13 +27,14 @@ class MainActivity : AppCompatActivity() {
 
         etCorreo = findViewById(R.id.etcorreo)
         etPass = findViewById(R.id.etpassword)
-        btnInicio = findViewById(R.id.btnregistrar)
+        btnInicio = findViewById(R.id.btningresar)
 
         dbHelper = DatabaseHelper(this)
 
         //EVENTO PARA INCIAR SESION
         btnInicio.setOnClickListener {
             //TODO: Agregar método de inicio de sesión
+            iniciarSesion()
         }
 
         tvcrearcuenta.setOnClickListener {
@@ -41,7 +43,35 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+        }
 
+    //MÉTODO PARA INICIAR SESIÓN
+    private fun iniciarSesion(){
+
+        //Acceder a la información que escribe el usuario
+        val correo = etCorreo.text.toString().trim()
+        val pass = etPass.text.toString().trim()
+
+        if (correo.isEmpty() || pass.isEmpty()){
+            Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        //LLAMAR AL MÉTODO DE INICIO DE SESIÓN EN LA BD
+        val resultado = dbHelper.iniciarSesion(correo, pass)
+
+        if (resultado){
+            //Si la sesión es correcta
+            Toast.makeText(this, "BIENVENIDO <3", Toast.LENGTH_SHORT).show()
+
+            val intent = Intent(this, HomeActivity::class.java)
+            startActivity(intent)
+            //Cerrar la pantalla actual
+            finish()
+        }else{
+            Toast.makeText(this, "Datos: INCORRECTOS", Toast.LENGTH_SHORT).show()
 
         }
     }
+
+}

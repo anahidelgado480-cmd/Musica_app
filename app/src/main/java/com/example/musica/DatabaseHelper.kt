@@ -78,7 +78,7 @@ fun iniciarSesion(correo: String, password: String) : Boolean{
 
     val query_sql = """
         SELECT * FROM $TABLE_USUARIOS
-        WHERE $COL_CORREO = ?
+        WHERE $COL_CORREO = ? and $COL_PASSWORD = ?
     """.trimIndent()
 
     //Crear cursor para recorrer la información
